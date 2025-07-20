@@ -20,16 +20,13 @@
  * @param  Puntero al string con el nombre del archivo.
  * @param  Puntero al string con el contenido a guardar.
  * @retval Estado de la operación.
+ * @note   Si el archivo existe se sobreescribirá el contenido.
  */
 int almacenar_elemento(char * clave, char * valor) {
 
-	if(access(clave, F_OK) == 0) {
-
-		return ARCHIVO_EXISTE;
-	}
 	FILE *archivo = fopen(clave, "w");
 
-	if (archivo == NULL) {
+	if(archivo == NULL) {
 
 		perror("file write");
 		return O_ERROR;
@@ -48,11 +45,8 @@ int almacenar_elemento(char * clave, char * valor) {
  */
 int recuperar_elemento(char * clave, char * valor) {
 
-	if(access(clave, F_OK) != 0) {
-
+	if(access(clave, F_OK) != 0)
 		return ARCHIVO_NO_EXISTE;
-	}
-
 	FILE *archivo = fopen(clave, "r");
 
 	if (archivo == NULL) {
@@ -74,10 +68,8 @@ int recuperar_elemento(char * clave, char * valor) {
  */
 int borrar_elemento(char * clave) {
 
-	if(access(clave, F_OK) != 0) {
-
+	if(access(clave, F_OK) != 0)
 		return ARCHIVO_NO_EXISTE;
-	}
 
 	if (remove(clave) != 0) {
 
@@ -86,4 +78,3 @@ int borrar_elemento(char * clave) {
 	}
 	return O_OK;
 }
-

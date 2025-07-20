@@ -38,6 +38,8 @@ int main(void) {
 		} else {
 
 			fprintf(stderr, "Error inesperado.\n");
+			tcp_connection_close();
+			tcp_server_close();
 			return EXIT_FAILURE;
 		}
 		tcp_connection_close();
@@ -79,17 +81,17 @@ static void proceso_msg(char * msg, int msg_size) {
 			switch(almacenar_elemento(palabras[1], palabras[2])){
 
 			case O_OK:
-				tcp_send_msg("OK", 3);
+				tcp_send_msg("OK\n");
 				break;
 			case ARCHIVO_EXISTE:
-				tcp_send_msg("DUPLICATE ENTRY", 19);
+				tcp_send_msg("DUPLICATE ENTRY\n");
 				break;
 			default:
-				tcp_send_msg("SYSTEM ERROR", 13);
+				tcp_send_msg("SYSTEM ERROR\n");
 			}
 		} else {
 
-			tcp_send_msg("MUST BE: SET <clave> <valor>", 29);
+			tcp_send_msg("MUST BE: SET <clave> <valor>\n");
 		}
 	} else if(!strcmp(palabras[0], "GET")) {
 
@@ -101,18 +103,19 @@ static void proceso_msg(char * msg, int msg_size) {
 			switch(long_msg) {
 
 				case ARCHIVO_NO_EXISTE:
-					tcp_send_msg("NOTFOUND", 9);
+					tcp_send_msg("NOTFOUND\n");
 					break;
 				case O_ERROR:
-					tcp_send_msg("SYSTEM ERROR", 13);
+					tcp_send_msg("SYSTEM ERROR\n");
 					break;
 				default:
-					tcp_send_msg("OK\n", 4);
-					tcp_send_msg(valor_leido, long_msg);
+					tcp_send_msg("OK\n");
+					strcat(valor_leido, "\n");
+					tcp_send_msg(valor_leido);
 			}
 		} else {
 
-			tcp_send_msg("MUST BE: GET <clave>", 21);
+			tcp_send_msg("MUST BE: GET <clave>\n");
 		}
 	} else if(!strcmp(palabras[0], "DEL")) {
 
@@ -121,21 +124,20 @@ static void proceso_msg(char * msg, int msg_size) {
 			switch(borrar_elemento(palabras[1]) ) {
 
 				case O_OK:
-					tcp_send_msg("OK", 3);
+					tcp_send_msg("OK\n");
 					break;
 				case ARCHIVO_NO_EXISTE:
-					tcp_send_msg("NOTFOUND", 9);
+					tcp_send_msg("NOTFOUND\n");
 					break;
 				default:
-					tcp_send_msg("SYSTEM ERROR", 13);
+					tcp_send_msg("SYSTEM ERROR\n");
 			}
 		} else {
 
-			tcp_send_msg("MUST BE: DEL <clave>", 21);
+			tcp_send_msg("MUST BE: DEL <clave>\n");
 		}
 	} else {
 
-		tcp_send_msg("COMMAND NOT FOUND", 18);
+		tcp_send_msg("COMMAND NOT FOUND\n");
 	}
 }
-

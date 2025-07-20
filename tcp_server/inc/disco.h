@@ -15,4 +15,3 @@ int recuperar_elemento(char * clave, char * valor);
 int borrar_elemento(char * clave);
 
 #endif /* DISCO_H_ */
-

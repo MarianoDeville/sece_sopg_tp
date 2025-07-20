@@ -14,7 +14,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include "../inc/tcp_server.h"
@@ -89,7 +89,7 @@ int tcp_new_conn(char *msg, int msg_size) {
 		return STATUS_ERROR;
 	}
 	msg[read_size] = 0x00;
-	printf("server: recibi %d bytes:%s", read_size, msg);
+	printf("server: recibi %d bytes: %s", read_size, msg);
 	return STATUS_OK;
 }
 
@@ -99,8 +99,9 @@ int tcp_new_conn(char *msg, int msg_size) {
  * @param  Entero con el tamaño del mensaje.
  * @retval Estado de la operación.
  */
-int tcp_send_msg(char * msg, int msg_size){
+int tcp_send_msg(char * msg){
 
+	int msg_size = strlen(msg);
 	int n = write(conn_fd, msg, msg_size);
 
 	if(n == -1) {
@@ -113,7 +114,7 @@ int tcp_send_msg(char * msg, int msg_size){
 }
 
 /**
- * @brief  Función que cierra un conección.
+ * @brief  Función que cierra la conección.
  * @param  None.
  * @retval Estado de la operación.
  */
@@ -127,3 +128,18 @@ int tcp_connection_close(void) {
 	return STATUS_OK;
 }
 
+
+/**
+ * @brief  Función que cierra el servidor.
+ * @param  None.
+ * @retval Estado de la operación.
+ */
+int tcp_server_close(void) {
+
+	if(close(conn_fd) == -1) {
+
+		perror("close");
+		return STATUS_ERROR;
+	}
+	return STATUS_OK;
+}
